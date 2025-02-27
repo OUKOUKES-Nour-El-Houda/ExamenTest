@@ -1,38 +1,36 @@
-import unittest
-import tempfile
-import time
-import shutil
+import random
+import string
+import pytest
 from selenium import webdriver
-from selenium.webdriver.chrome.service import Service
-from selenium.webdriver.chrome.options import Options
+from selenium.webdriver.common.by import By
+from selenium.webdriver.support.ui import WebDriverWait
+from selenium.webdriver.support import expected_conditions as EC
 
-class TestLogin(unittest.TestCase):
+@pytest.fixture
+def driver():
+    """Initialise le WebDriver."""
+    driver = webdriver.Chrome()  # Ou un autre navigateur, comme Firefox
+    yield driver
+    driver.quit()
 
-    def setUp(self):
-        chrome_options = Options()
-        # Créer un répertoire temporaire pour les données utilisateur avec un identifiant unique
-        unique_id = str(int(time.time()))  # Utiliser un timestamp comme identifiant unique
-        self.temp_dir = tempfile.mkdtemp(prefix=f"user_data_{unique_id}_")
-        chrome_options.add_argument(f"user-data-dir={self.temp_dir}")
-        chrome_options.add_argument('--no-sandbox')  # Option pour éviter les problèmes de sécurité
+def generate_random_string(length):
+    """Génère une chaîne aléatoire de caractères."""
+    return ''.join(random.choices(string.ascii_letters, k=length))
 
-        # Instancier le WebDriver Chrome
-        self.driver = webdriver.Chrome(options=chrome_options)
+def test_inscription(driver):
+    driver.get("https://automationexercise.com/login")
+    print("Page chargée")
 
-    def test_login(self):
-        # Exemple de test de connexion
-        self.driver.get("https://example.com/login")
-        # Remplissez les étapes de test pour le formulaire de connexion ici
-        # Par exemple :
-        # self.driver.find_element(By.NAME, "username").send_keys("testuser")
-        # self.driver.find_element(By.NAME, "password").send_keys("password")
-        # self.driver.find_element(By.NAME, "login").click()
-        # Vérifiez que la connexion a réussi
+    # Remplissage du formulaire d'inscription
+    name = generate_random_string(10)
+    email = f"{generate_random_string(5)}@test.com"
+    password = "Supernou124!"
+    first_name = generate_random_string(5)
+    last_name = generate_random_string(5)
+    address = f"{random.randint(1, 999)} {generate_random_string(8)} St"
+    city = generate_random_string(6)
+    state = generate_random_string(6)
+    zipcode = ''.join(random.choices(string.digits, k=5))
+    mobile_number = ''.join(random.choices(string.digits, k=10))
 
-    def tearDown(self):
-        # Fermer le navigateur et supprimer le répertoire temporaire
-        self.driver.quit()
-        shutil.rmtree(self.temp_dir)
-
-if __name__ == "__main__":
-    unittest.main()
+    # Attendre que le champ de nom soit vis
