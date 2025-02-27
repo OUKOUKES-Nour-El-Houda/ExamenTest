@@ -6,12 +6,14 @@ from selenium.webdriver.common.by import By
 from selenium.webdriver.support.ui import WebDriverWait
 from selenium.webdriver.support import expected_conditions as EC
 
-@pytest.fixture
+@pytest.fixture(scope="module")
 def driver():
-    """Initialise le WebDriver."""
-    driver = webdriver.Chrome()  # Ou un autre navigateur, comme Firefox
+    driver = webdriver.Chrome()
+    driver.implicitly_wait(10)
+    driver.maximize_window()
     yield driver
     driver.quit()
+
 
 def generate_random_string(length):
     """Génère une chaîne aléatoire de caractères."""
