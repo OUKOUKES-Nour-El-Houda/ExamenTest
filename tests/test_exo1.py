@@ -3,11 +3,12 @@ from selenium import webdriver
 from selenium.webdriver.chrome.service import Service
 from selenium.webdriver.chrome.options import Options
 import tempfile
+import time
 
 class TestLogin(unittest.TestCase):
     def setUp(self):
         chrome_options = Options()
-        # Créer un répertoire temporaire pour les données utilisateur
+        # Créer un répertoire temporaire pour les données utilisateur avec un identifiant unique
         self.temp_dir = tempfile.mkdtemp()
         chrome_options.add_argument(f"user-data-dir={self.temp_dir}")
         # Option pour éviter les problèmes de sécurité dans les environnements CI
