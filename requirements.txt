@@ -1,0 +1,12 @@
+pytest
+selenium
+coverage
+fastapi
+locust
+uvicorn
+httpx
+pytest-mock
+pytest-profiling
+pylint
+sqlalchemy
+pydantic
