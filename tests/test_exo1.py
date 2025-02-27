@@ -1,47 +1,38 @@
-from selenium import webdriver
-from selenium.webdriver.common.by import By
-from selenium.webdriver.support.ui import WebDriverWait
-from selenium.webdriver.support import expected_conditions as EC
 import unittest
+from selenium import webdriver
+from selenium.webdriver.chrome.service import Service
+from selenium.webdriver.chrome.options import Options
+import tempfile
 
 class TestLogin(unittest.TestCase):
     def setUp(self):
-        self.driver = webdriver.Chrome()  # Utilisez le WebDriver approprié
-        self.driver.implicitly_wait(10)  # Attendre implicitement jusqu'à ce que les éléments soient disponibles
+        chrome_options = Options()
+        # Créer un répertoire temporaire pour les données utilisateur
+        self.temp_dir = tempfile.mkdtemp()
+        chrome_options.add_argument(f"user-data-dir={self.temp_dir}")
+        # Option pour éviter les problèmes de sécurité dans les environnements CI
+        chrome_options.add_argument('--no-sandbox')
+        
+        self.driver = webdriver.Chrome(options=chrome_options)
 
     def test_login(self):
-        driver = self.driver
-        driver.get("https://automationexercise.com/login")
-        print("Page chargée")
+        # Remplacez cette URL par celle de votre application
+        self.driver.get("http://example.com/login")
 
-        # Remplir le formulaire d'inscription
-        WebDriverWait(driver, 20).until(EC.visibility_of_element_located((By.NAME, "name"))).send_keys("essaiydy")
-        driver.find_element(By.XPATH, "//input[@data-qa='signup-email']").send_keys("abir.@test.com")
-        driver.find_element(By.XPATH, "//button[@data-qa='signup-button']").click()
+        # Ajoutez ici vos actions de test, par exemple :
+        username_input = self.driver.find_element("name", "username")
+        password_input = self.driver.find_element("name", "password")
+        login_button = self.driver.find_element("id", "loginButton")
 
-        # Remplir le formulaire de création de compte
-        WebDriverWait(driver, 20).until(EC.presence_of_element_located((By.ID, "password"))).send_keys("Super124!")
-        driver.find_element(By.ID, "first_name").send_keys("ABI")
-        driver.find_element(By.ID, "last_name").send_keys("ESAIYdA")
-        driver.find_element(By.ID, "address1").send_keys("12345 de Paris")
-        driver.find_element(By.ID, "state").send_keys("Île-de-France")
-        driver.find_element(By.ID, "city").send_keys("Lille")
-        driver.find_element(By.ID, "zipcode").send_keys("7521")
-        driver.find_element(By.ID, "mobile_number").send_keys("+3323467869")
+        username_input.send_keys("votre_nom_utilisateur")
+        password_input.send_keys("votre_mot_de_passe")
+        login_button.click()
 
-        # Soumettre le formulaire de création de compte
-        WebDriverWait(driver, 20).until(EC.element_to_be_clickable((By.XPATH, "//button[@data-qa='create-account']"))).click()
-
-        # Vérifie que la connexion a été réussie
-        try:
-            # Remplacez 'some-success-class' par la classe qui est réellement affichée après la connexion
-            success_element = WebDriverWait(driver, 20).until(EC.presence_of_element_located((By.CLASS_NAME, "success-message-class")))  # Mettez ici la classe correcte
-            self.assertTrue(success_element.is_displayed(), "L'élément de succès n'est pas affiché.")
-        except Exception as e:
-            print("Erreur lors de la vérification de la connexion:", e)
+        # Ajoutez ici vos assertions pour vérifier le succès de la connexion
+        self.assertIn("Tableau de bord", self.driver.title)
 
     def tearDown(self):
-        self.driver.quit()  # Fermer le navigateur après les tests
+        self.driver.quit()
 
 if __name__ == "__main__":
     unittest.main()
