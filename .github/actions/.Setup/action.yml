@@ -1,0 +1,26 @@
+name: Setup # non qui indique dans git
+
+inputs:
+  python-version:
+    description: 'Python version' #decrire la version dde python utuliser 
+    required: true #cet obligatoire de le mettre 
+    default: '3.10.12' # cest la version de python utuliser
+# cest les entrer dutulisateur
+runs: #les truc que vous vouler les executer 
+  using: composite # on lutilise pour rougrouper les etape quand a besooin pour ne pas repeter our chaque workflow realiser 
+  steps:
+    - name: Set up Python 3.10.12
+      uses: actions/setup-python@v5
+      with:
+        python-version: ${{ inputs.python-version }} # cette etape jusqua la cest juste pour instaler python 
+        # dans cette ligne ilprendre la version quand enter das input
+
+    - name: Install dependencies
+      shell: bash
+      run: |
+        pip install fastapi locust pytest uvicorn coverage 
+        httpx pytest-mock pytest-profiling pylint sqlalchemy pydantic
+        
+
+  # but cest de instaler tout les bibliotheque python nessaicaie pour le projet
+  
