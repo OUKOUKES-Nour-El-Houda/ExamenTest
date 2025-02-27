@@ -7,20 +7,19 @@ import time
 import random
 import string
 
-# Fixture pour initialiser et fermer le WebDriver
+
 @pytest.fixture(scope="session")
 def driver():
     options = webdriver.ChromeOptions()
     options.add_argument("--start-maximized")
-    # Mode headless commenté pour voir localement
-    # options.add_argument("--headless")
+
     options.add_argument("--no-sandbox")
     options.add_argument("--disable-dev-shm-usage")
     driver = webdriver.Chrome(options=options)
     yield driver
     driver.quit()
 
-# Fonctions de génération aléatoire
+
 def generate_random_string(length):
     return ''.join(random.choices(string.ascii_letters + string.digits, k=length))
 
@@ -33,11 +32,11 @@ def generate_random_password():
 def generate_random_address():
     return f"{random.randint(1, 9999)} {generate_random_string(10)} Street"
 
-# Test unique pour le processus d'inscription jusqu'au clic sur "Create Account"
+
 def test_signup_process(driver):
     print("Page chargée")
     driver.get("https://automationexercise.com/login")
-    time.sleep(3)  # Pause pour laisser le popup apparaître
+    time.sleep(3)  
 
     print("Recherche du bouton 'Autoriser' dans le popup de consentement...")
     autoriser_button = WebDriverWait(driver, 15).until(
@@ -47,7 +46,7 @@ def test_signup_process(driver):
     print("✅ Bouton 'Autoriser' cliqué avec succès")
     time.sleep(2)
 
-    # Génération des données
+
     name = generate_random_string(6)
     email = generate_random_email()
     password = generate_random_password()
@@ -92,8 +91,6 @@ def test_signup_process(driver):
         driver.execute_script("arguments[0].click();", create_account_button)
         print("✅ Clic forcé via JavaScript effectué")
 
-    # Pause pour stabiliser la redirection, mais sans vérification stricte
     time.sleep(5)
     print("✅ Inscription soumise avec succès !")
-    # Assertion simple pour confirmer que le clic a été effectué
     assert True, "Le processus d'inscription jusqu'au clic sur 'Create Account' a réussi"
