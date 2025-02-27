@@ -19,17 +19,17 @@ jobs:
       - name: Set up Python
         uses: actions/setup-python@v5
         with:
-          python-version: '3.10.12'  # Spécifie la version de Python à utiliser
+          python-version: '3.10.12' 
 
       - name: Install dependencies
         run: |
-          pip install -r requirements.txt  # Installe les dépendances listées dans requirements.txt
-          pip install coverage  # Assure-toi que coverage est installé
+          pip install -r requirements.txt  
+          pip install coverage  
 
       - name: Run tests with coverage
         run: |
-          coverage run -m pytest  # Exécute pytest avec coverage
-          coverage xml  # Génère le fichier coverage.xml
+          coverage run -m pytest  
+          coverage xml  
 
       - name: Coverage report
         uses: orgoro/coverage@v3.2
