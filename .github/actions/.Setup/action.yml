@@ -1,25 +1,52 @@
-name: Setup
+name: CI Workflow
 
-inputs:
-  python-version:
-    description: 'Python version'
-    required: true
-    default: '3.10.12'
+on:
+  push:
+    branches:
+      - main
+  pull_request:
+    branches:
+      - main
 
-runs: 
-  using: composite 
-  steps:
-    - name: Set up Python 3.10.12
-      uses: actions/setup-python@v5
-      with:
-        python-version: ${{ inputs.python-version }} 
+jobs:
+  build-and-test:
+    runs-on: ubuntu-latest
 
-    - name: Install dependencies
-      shell: bash
-      run: |
-        pip install -r requirements.txt
-        
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
 
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.10.12' 
 
+      - name: Install dependencies
+        run: |
+          pip install -r requirements.txt  
+          pip install coverage  
 
+      - name: Run tests with coverage
+        run: |
+          coverage run -m pytest  
+          coverage xml  
 
+      - name: Coverage report
+        uses: orgoro/coverage@v3.2
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }}
+          coverageFile: coverage.xml
+          thresholdAll: "0.8"
+
+  release:
+    runs-on: ubuntu-latest
+    needs: build-and-test
+    if: github.ref == 'refs/heads/main'
+    env:
+      GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+    steps:
+      - name: Release
+        uses: rymndhng/release-on-push-action@master
+        with:
+          bump_version_scheme: major
+          use_github_release_notes: true
