@@ -1,42 +1,34 @@
-from selenium import webdriver
-from selenium.webdriver.common.by import By
-from selenium.webdriver.support.ui import WebDriverWait
-from selenium.webdriver.support import expected_conditions as EC
+import unittest
+import tempfile
 import time
+from selenium import webdriver
+from selenium.webdriver.chrome.service import Service
+from selenium.webdriver.chrome.options import Options
 
-# Initialisation du driver Chrome
-driver = webdriver.Chrome()
+class TestLogin(unittest.TestCase):
 
-try:
-    driver.get("https://automationexercise.com/login")
-    print("Page chargée")
-    time.sleep(5)  # Attendre que la page se charge
+    def setUp(self):
+        chrome_options = Options()
+        # Créer un répertoire temporaire pour les données utilisateur avec un identifiant unique
+        unique_id = str(int(time.time()))  # Utiliser un timestamp comme identifiant unique
+        self.temp_dir = tempfile.mkdtemp(prefix=f"user_data_{unique_id}_")
+        chrome_options.add_argument(f"user-data-dir={self.temp_dir}")
+        # Option pour éviter les problèmes de sécurité dans les environnements CI
+        chrome_options.add_argument('--no-sandbox')
+        
+        # Instancier le WebDriver Chrome
+        self.driver = webdriver.Chrome(options=chrome_options)
 
-    # Remplir le formulaire d'inscription
-    WebDriverWait(driver, 20).until(EC.visibility_of_element_located((By.NAME, "name"))).send_keys("essaiydynour")
-    driver.find_element(By.XPATH, "//input[@data-qa='signup-email']").send_keys("abirnou.@test.com")
-    driver.find_element(By.XPATH, "//button[@data-qa='signup-button']").click()
+    def test_login(self):
+        # Exemple de test de connexion
+        self.driver.get("https://example.com/login")
+        # Ajoutez ici vos étapes de test pour remplir le formulaire de connexion
 
-    # Attendre que le champ du mot de passe soit visible
-    WebDriverWait(driver, 20).until(EC.presence_of_element_located((By.ID, "password")))
+    def tearDown(self):
+        # Fermer le navigateur et supprimer le répertoire temporaire
+        self.driver.quit()
+        import shutil
+        shutil.rmtree(self.temp_dir)
 
-    # Remplir les informations supplémentaires
-    driver.find_element(By.ID, "password").send_keys("Supernou124!")
-    driver.find_element(By.ID, "first_name").send_keys("ABtI")
-    driver.find_element(By.ID, "last_name").send_keys("ESAIYdjtA")
-    driver.find_element(By.ID, "address1").send_keys("12345 dett Paris")
-    driver.find_element(By.ID, "state").send_keys("Île-deLAFractte")
-    driver.find_element(By.ID, "city").send_keys("little")
-    driver.find_element(By.ID, "zipcode").send_keys("752t1")
-    driver.find_element(By.ID, "mobile_number").send_keys("+33238467869")
-
-    # Attendre que le bouton de création de compte soit cliquable et cliquer dessus
-    WebDriverWait(driver, 20).until(EC.element_to_be_clickable((By.XPATH, "//button[@data-qa='create-account']"))).click()
-
-    # Attendre quelques secondes pour voir le résultat
-    time.sleep(5)
-
-except Exception as e:
-    print(f"Une erreur s'est produite : {e}")
-finally:
-    driver.quit()  # Assurez-vous de fermer le navigateur
+if __name__ == "__main__":
+    unittest.main()
