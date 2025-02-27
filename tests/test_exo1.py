@@ -24,8 +24,8 @@ class TestLogin(unittest.TestCase):
         driver.find_element(By.ID, "first_name").send_keys("ABI")
         driver.find_element(By.ID, "last_name").send_keys("ESAIYdA")
         driver.find_element(By.ID, "address1").send_keys("12345 de Paris")
-        driver.find_element(By.ID, "state").send_keys("Île-deLAFrace")
-        driver.find_element(By.ID, "city").send_keys("lile")
+        driver.find_element(By.ID, "state").send_keys("Île-de-France")
+        driver.find_element(By.ID, "city").send_keys("Lille")
         driver.find_element(By.ID, "zipcode").send_keys("7521")
         driver.find_element(By.ID, "mobile_number").send_keys("+3323467869")
 

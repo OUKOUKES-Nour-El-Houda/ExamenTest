@@ -1,4 +1,4 @@
-name: EX python
+name: CI Workflow
 
 on:
   push:
