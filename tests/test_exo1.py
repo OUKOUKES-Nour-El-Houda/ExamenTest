@@ -1,14 +1,13 @@
-import unittest
 from selenium import webdriver
 from selenium.webdriver.common.by import By
 from selenium.webdriver.support.ui import WebDriverWait
 from selenium.webdriver.support import expected_conditions as EC
+import unittest
 
 class TestLogin(unittest.TestCase):
     def setUp(self):
-        options = webdriver.ChromeOptions()
-        options.add_argument('--headless')  # Exécuter en mode headless pour CI/CD
-        self.driver = webdriver.Chrome(options=options)
+        self.driver = webdriver.Chrome()  # Utilisez le WebDriver approprié
+        self.driver.implicitly_wait(10)  # Attendre implicitement jusqu'à ce que les éléments soient disponibles
 
     def test_login(self):
         driver = self.driver
@@ -21,8 +20,7 @@ class TestLogin(unittest.TestCase):
         driver.find_element(By.XPATH, "//button[@data-qa='signup-button']").click()
 
         # Remplir le formulaire de création de compte
-        WebDriverWait(driver, 20).until(EC.presence_of_element_located((By.ID, "password")))
-        driver.find_element(By.ID, "password").send_keys("Super124!")
+        WebDriverWait(driver, 20).until(EC.presence_of_element_located((By.ID, "password"))).send_keys("Super124!")
         driver.find_element(By.ID, "first_name").send_keys("ABI")
         driver.find_element(By.ID, "last_name").send_keys("ESAIYdA")
         driver.find_element(By.ID, "address1").send_keys("12345 de Paris")
@@ -34,12 +32,16 @@ class TestLogin(unittest.TestCase):
         # Soumettre le formulaire de création de compte
         WebDriverWait(driver, 20).until(EC.element_to_be_clickable((By.XPATH, "//button[@data-qa='create-account']"))).click()
 
-        # Vérifie que la connexion a été réussie (adapté selon l'application)
-        # Par exemple, vérifier si un élément spécifique est présent sur la page après la connexion
-        WebDriverWait(driver, 20).until(EC.presence_of_element_located((By.CLASS_NAME, "some-success-class")))  # Remplace par une classe existante sur la page
+        # Vérifie que la connexion a été réussie
+        try:
+            # Remplacez 'some-success-class' par la classe qui est réellement affichée après la connexion
+            success_element = WebDriverWait(driver, 20).until(EC.presence_of_element_located((By.CLASS_NAME, "success-message-class")))  # Mettez ici la classe correcte
+            self.assertTrue(success_element.is_displayed(), "L'élément de succès n'est pas affiché.")
+        except Exception as e:
+            print("Erreur lors de la vérification de la connexion:", e)
 
     def tearDown(self):
-        self.driver.quit()
+        self.driver.quit()  # Fermer le navigateur après les tests
 
 if __name__ == "__main__":
     unittest.main()
